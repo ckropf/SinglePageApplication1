@@ -11,8 +11,6 @@ Imports System.Web.Http
 Public Class TodoListController
     Inherits ApiController
 
-    'TODO: Test comment, remove
-
     Private db As New TodoItemContext()
 
     ' GET api/TodoList

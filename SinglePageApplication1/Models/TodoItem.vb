@@ -13,6 +13,7 @@ Public Class TodoItem
     <Required()>
     Public Property Title As String
     Public Property IsDone As Boolean
+    Public Property Priority As Integer
 
     <ForeignKey("TodoList")>
     Public Property TodoListId As Integer

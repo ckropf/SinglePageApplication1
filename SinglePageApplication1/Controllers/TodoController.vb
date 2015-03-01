@@ -4,6 +4,7 @@ Imports System.Data.Entity.Infrastructure
 Imports System.Net
 Imports System.Net.Http
 Imports System.Web.Http
+Imports System.Data.Entity
 
 <Authorize()> _
 <ValidateHttpAntiForgeryToken()>
@@ -12,7 +13,7 @@ Public Class TodoController
     Private db As New TodoItemContext()
 
     ' PUT api/Todo/5
-    Public Function PutTodoItem(id As Integer, todoItemDto As TodoItemDto) As HttpResponseMessage 
+    Public Function PutTodoItem(id As Integer, todoItemDto As TodoItemDto) As HttpResponseMessage
         If Not ModelState.IsValid Then
             Return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ModelState)
         End If
@@ -46,7 +47,7 @@ Public Class TodoController
     End Function
 
     ' POST api/Todo
-    Public Function PostTodoItem(todoItemDto As TodoItemDto) As HttpResponseMessage 
+    Public Function PostTodoItem(todoItemDto As TodoItemDto) As HttpResponseMessage
         If Not ModelState.IsValid Then
             Return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ModelState)
         End If
@@ -70,12 +71,12 @@ Public Class TodoController
         todoItemDto.TodoItemId = todoItem.TodoItemId
 
         Dim response As HttpResponseMessage = Request.CreateResponse(HttpStatusCode.Created, todoItemDto)
-        response.Headers.Location = New Uri(Url.Link("DefaultApi", New With { .id = todoItemDto.TodoItemId }))
+        response.Headers.Location = New Uri(Url.Link("DefaultApi", New With {.id = todoItemDto.TodoItemId}))
         Return response
     End Function
 
     ' DELETE api/Todo/5
-    Public Function DeleteTodoItem(id As Integer) As HttpResponseMessage 
+    Public Function DeleteTodoItem(id As Integer) As HttpResponseMessage
         Dim todoItem As TodoItem = db.TodoItems.Find(id)
         If todoItem Is Nothing Then
             Return Request.CreateResponse(HttpStatusCode.NotFound)
@@ -92,7 +93,7 @@ Public Class TodoController
         Try
             db.SaveChanges()
         Catch e As DbUpdateConcurrencyException
-            return Request.CreateResponse(HttpStatusCode.InternalServerError)
+            Return Request.CreateResponse(HttpStatusCode.InternalServerError)
         End Try
 
         Return Request.CreateResponse(HttpStatusCode.OK, todoItemDto)

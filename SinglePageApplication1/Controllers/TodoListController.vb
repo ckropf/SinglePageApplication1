@@ -6,6 +6,7 @@ Imports System.Linq
 Imports System.Net
 Imports System.Net.Http
 Imports System.Web.Http
+Imports System.Data.Entity
 
 <Authorize()>
 Public Class TodoListController
@@ -67,7 +68,7 @@ Public Class TodoListController
 
     ' POST api/TodoList
     <ValidateHttpAntiForgeryToken()>
-    Public Function PostTodoList(todoListDto As TodoListDto) As HttpResponseMessage 
+    Public Function PostTodoList(todoListDto As TodoListDto) As HttpResponseMessage
         If Not ModelState.IsValid Then
             Return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ModelState)
         End If
@@ -79,19 +80,19 @@ Public Class TodoListController
         todoListDto.TodoListId = todoList.TodoListId
 
         Dim response As HttpResponseMessage = Request.CreateResponse(HttpStatusCode.Created, todoListDto)
-        response.Headers.Location = New Uri(Url.Link("DefaultApi", New With { .id = todoListDto.TodoListId }))
+        response.Headers.Location = New Uri(Url.Link("DefaultApi", New With {.id = todoListDto.TodoListId}))
         Return response
     End Function
 
     ' DELETE api/TodoList/5
     <ValidateHttpAntiForgeryToken()>
-    public Function DeleteTodoList(id As Integer) As HttpResponseMessage 
+    Public Function DeleteTodoList(id As Integer) As HttpResponseMessage
         Dim todoList As TodoList = db.TodoLists.Find(id)
         If todoList Is Nothing Then
             Return Request.CreateResponse(HttpStatusCode.NotFound)
         End If
 
-        If Not db.Entry(todoList).Entity.UserId = User.Identity.Name
+        If Not db.Entry(todoList).Entity.UserId = User.Identity.Name Then
             ' Trying to delete a record that does not belong to the user
             Return Request.CreateResponse(HttpStatusCode.Unauthorized)
         End If
@@ -105,7 +106,7 @@ Public Class TodoListController
             Return Request.CreateResponse(HttpStatusCode.InternalServerError)
         End Try
 
-        return Request.CreateResponse(HttpStatusCode.OK, todoListDto)
+        Return Request.CreateResponse(HttpStatusCode.OK, todoListDto)
     End Function
 
     Protected Overrides Sub Dispose(disposing As Boolean)
